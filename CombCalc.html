@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>9th age CombCalc test</title>
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css">
+	<!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script> -->
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script> 
+	<script src="https://code.jquery.com/jquery-1.11.3.min.js"></script>
+<!-- %%%%%%%%%%%%%%%%%%%% -->
+	<script type="text/javascript">
+		function AddRow(table,idx){
+			// call with table id and index (for submit) to add a new row
+			num_rows=$('#'+table+' > tbody > tr').length; // To get the total rows in the table 
+			// alert("rows: "+num_rows)
+			$('#'+table+' > tbody:last-child').append('<tr>'+
+			'<td><select class="army" name="'+idx+'['+num_rows+'][myarmy]"><option value=""></option><option value="VC">VC</option><option value="DE">DE</option></select></td>'+
+			'<td><select class="myunit" name="'+idx+'['+num_rows+'][myunit]"><option value="0"></option></select></td>'+
+			'<td> <input type="number" value="10" min="1" max="10" step="1" name="'+idx+'['+num_rows+'][mymodels]"> </td>'+
+			'<td> <input type="number" value="0.25" min="0" max="1" step="0.01" name="'+idx+'['+num_rows+'][myprob]"> </td>'+
+			'<td> <input type="number" value="5" min="0" max="10" step="1" name="'+idx+'['+num_rows+'][myini]"> </td>'+
+			'</tr>');
+		}
+		function DelRow(table){
+			// call with table id to delete last row
+			num_rows=$('#'+table+' > tbody > tr').length; // To get the total rows in the table 
+			if (num_rows > 1){
+				$('#'+table+' > tbody>tr:last').remove();
+			} 
+			else{
+				alert("You can't delete this row")
+			}
+		}
+		$(document).ready(function(){
+			// Submit function
+			$("form").submit(function(event){
+				// Stop form from submitting normally
+				event.preventDefault();
+				// Serialize the submitted form control values to be sent to the web server with the request
+				var formValues = $(this).serialize();
+				// Send the form data using post
+				// alert(formValues)
+				$.post("plot.php", formValues, function(data){
+					// Display the returned data in browser
+					$("#result").html(data);
+				});
+			});
+			// handle army select
+			$(".table").on("change",".army",function () {
+				var self = this;
+				var val = $(this).find('option:selected').text();
+				if ((val != '')){
+					//alert( val +' army chosen! will send '+val);
+					$.post("DrpDwn.php", {Army: val}, function(data){
+						// Display the returned data in browser
+						// alert(data);
+						$(self).parent().siblings().children(".myunit").html(data);
+					});
+				}
+			});
+			// handle unit select
+			$(".table").on("change",".myunit",function () {
+				var self = this;
+				var val = $(this).find('option:selected').text();
+				var val_post = $(this).serialize();
+				if ((val != '')){
+					//alert( val +' unit chosen!');
+					/*	
+					// !!! change unit profile here !!!
+					$.post("DrpDwn.php", val_post , function(data){
+						// Display the returned data in browser
+						$(self).parent().siblings().children(".third_fild").html(data);
+					}); */
+				}
+			})
+		});
+	</script>
+<!-- %%%%%%%%%%%%%%%%%%%% -->
+	<style type="text/css">
+		.bs-input_form{
+			margin: 20px;
+		}
+	</style>
+</head>
+<!-- %%%%%%%%%%%%%%%%%%%% -->
+<body>
+	<div class="bs-input_form">
+		<form>
+			<h2>Player A</h2>
+			<table id="table_a" class="table">
+				<thead>
+					<tr>
+						<th>Army</th><th>Unit</th> <th>Models</th> <th>Prob</th> <th>Ini</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<select class="army" name="A[0][myarmy]">
+								<option value=""></option>
+								<option value="VC">VC</option>
+								<option value="DE">DE</option>
+							</select>	
+						</td>
+						<td>
+							<select class="myunit" name="A[0][myunit]">
+								<option value="0"></option>
+							</select>	
+						</td>
+						<td> <input type="number" value="10" min="1" max="10" step="1" name="A[0][mymodels]"> </td>
+						<td> <input type="number" value="0.25" min="0" max="1" step="0.01" name="A[0][myprob]"> </td>
+						<td> <input type="number" value="5" min="0" max="10" step="1" name="A[0][myini]"> </td>
+					</tr>
+				</tbody>
+			</table>
+			<h2>Player B</h2>
+			<table id="table_b" class="table">
+				<thead>
+					<tr>
+						<th>Army</th><th>Unit</th> <th>Models</th> <th>Prob</th> <th>Ini</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<td>
+							<select class="army" name="B[0][myarmy]">
+								<option value=""></option>
+								<option value="VC">VC</option>
+								<option value="DE">DE</option>
+							</select>	
+						</td>
+						<td>
+							<select class="myunit" name="B[0][myunit]">
+								<option value="0"></option>
+							</select>	
+						</td>
+						<td> <input type="number" value="10" min="1" max="10" step="1" name="B[0][mymodels]"> </td>
+						<td> <input type="number" value="0.25" min="0" max="1" step="0.01" name="B[0][myprob]"> </td>
+						<td> <input type="number" value="5" min="0" max="10" step="1" name="B[0][myini]"> </td>
+					</tr>
+				</tbody>
+			</table>
+			<!-- form submit and table control -->
+			<button type="submit" class="btn btn-primary">Submit</button> 	
+			<input type="reset" class="btn btn-primary">
+			<button type="button" id="btnAddA" class="btn btn-primary" onclick='AddRow("table_a","A")'>Add row to A</button> 
+			<button type="button" id="btnDelA" class="btn btn-primary" onclick='DelRow("table_a","A")'>Delete row from A</button>
+			<button type="button" id="btnAddB" class="btn btn-primary" onclick='AddRow("table_b","B")'>Add row to B</button> 
+			<button type="button" id="btnDelB" class="btn btn-primary" onclick='DelRow("table_b","B")'>Delete row from B</button>			
+		</form> 
+	</div>
+	<!-- result section -->
+	<div id="result">
+		<h2>PHP result will show here</h2>
+	</div>
+</body>
+</html>                                		
