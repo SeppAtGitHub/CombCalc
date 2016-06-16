@@ -13,7 +13,13 @@
 			// call with table id and index (for submit) to add a new row
 			num_rows=$('#'+table+' > tbody > tr').length; // To get the total rows in the table 
 			// alert("rows: "+num_rows)
-			$('#'+table+' > tbody:last-child').append('<tr><td> <input type="text" name="'+idx+'['+num_rows+'][myunit]"> </td><td> <input type="number" value="10" min="1" max="10" step="1" name="'+idx+'['+num_rows+'][mymodels]"> </td> <td> <input type="number" value="0.25" min="0" max="1" step="0.01" name="'+idx+'['+num_rows+'][myprob]"> </td>	<td> <input type="number" value="5" min="0" max="10" step="1" name="'+idx+'['+num_rows+'][myini]"> </td>	</tr>');
+			$('#'+table+' > tbody:last-child').append('<tr>'+
+			'<td><select class="army" name="'+idx+'['+num_rows+'][myarmy]"><option value=""></option><option value="VC">VC</option><option value="DE">DE</option></select></td>'+
+			'<td><select class="myunit" name="'+idx+'['+num_rows+'][myunit]"><option value="0"></option></select></td>'+
+			'<td> <input type="number" value="10" min="1" max="10" step="1" name="'+idx+'['+num_rows+'][mymodels]"> </td>'+
+			'<td> <input type="number" value="0.25" min="0" max="1" step="0.01" name="'+idx+'['+num_rows+'][myprob]"> </td>'+
+			'<td> <input type="number" value="5" min="0" max="10" step="1" name="'+idx+'['+num_rows+'][myini]"> </td>'+
+			'</tr>');
 		}
 		function DelRow(table){
 			// call with table id to delete last row
@@ -26,17 +32,47 @@
 			}
 		}
 		$(document).ready(function(){
+			// Submit function
 			$("form").submit(function(event){
 				// Stop form from submitting normally
 				event.preventDefault();
 				// Serialize the submitted form control values to be sent to the web server with the request
 				var formValues = $(this).serialize();
 				// Send the form data using post
+				// alert(formValues)
 				$.post("plot.php", formValues, function(data){
 					// Display the returned data in browser
 					$("#result").html(data);
 				});
 			});
+			// handle army select
+			$(".table").on("change",".army",function () {
+				var self = this;
+				var val = $(this).find('option:selected').text();
+				if ((val != '')){
+					//alert( val +' army chosen! will send '+val);
+					$.post("DrpDwn.php", {Army: val}, function(data){
+						// Display the returned data in browser
+						// alert(data);
+						$(self).parent().siblings().children(".myunit").html(data);
+					});
+				}
+			});
+			// handle unit select
+			$(".table").on("change",".myunit",function () {
+				var self = this;
+				var val = $(this).find('option:selected').text();
+				var val_post = $(this).serialize();
+				if ((val != '')){
+					//alert( val +' unit chosen!');
+					/*	
+					// !!! change unit profile here !!!
+					$.post("DrpDwn.php", val_post , function(data){
+						// Display the returned data in browser
+						$(self).parent().siblings().children(".third_fild").html(data);
+					}); */
+				}
+			})
 		});
 	</script>
 <!-- %%%%%%%%%%%%%%%%%%%% -->
@@ -54,12 +90,23 @@
 			<table id="table_a" class="table">
 				<thead>
 					<tr>
-						<th>Unit</th> <th>Models</th> <th>Prob</th> <th>Ini</th>
+						<th>Army</th><th>Unit</th> <th>Models</th> <th>Prob</th> <th>Ini</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td> <input type="text" name="A[0][myunit]"> </td>
+						<td>
+							<select class="army" name="A[0][myarmy]">
+								<option value=""></option>
+								<option value="VC">VC</option>
+								<option value="DE">DE</option>
+							</select>	
+						</td>
+						<td>
+							<select class="myunit" name="A[0][myunit]">
+								<option value="0"></option>
+							</select>	
+						</td>
 						<td> <input type="number" value="10" min="1" max="10" step="1" name="A[0][mymodels]"> </td>
 						<td> <input type="number" value="0.25" min="0" max="1" step="0.01" name="A[0][myprob]"> </td>
 						<td> <input type="number" value="5" min="0" max="10" step="1" name="A[0][myini]"> </td>
@@ -70,12 +117,23 @@
 			<table id="table_b" class="table">
 				<thead>
 					<tr>
-						<th>Unit</th> <th>Models</th> <th>Prob</th> <th>Ini</th>
+						<th>Army</th><th>Unit</th> <th>Models</th> <th>Prob</th> <th>Ini</th>
 					</tr>
 				</thead>
 				<tbody>
 					<tr>
-						<td> <input type="text" name="B[0][myunit]"> </td>
+						<td>
+							<select class="army" name="B[0][myarmy]">
+								<option value=""></option>
+								<option value="VC">VC</option>
+								<option value="DE">DE</option>
+							</select>	
+						</td>
+						<td>
+							<select class="myunit" name="B[0][myunit]">
+								<option value="0"></option>
+							</select>	
+						</td>
 						<td> <input type="number" value="10" min="1" max="10" step="1" name="B[0][mymodels]"> </td>
 						<td> <input type="number" value="0.25" min="0" max="1" step="0.01" name="B[0][myprob]"> </td>
 						<td> <input type="number" value="5" min="0" max="10" step="1" name="B[0][myini]"> </td>

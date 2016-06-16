@@ -8,7 +8,7 @@ echo '<select class="myunit"> <option value="0"></option>';
 if (file_exists($file_name)) {
     $xml = simplexml_load_file($file_name);
 	foreach ($xml->unit as $unit) {
-	   echo '<option value="',$i,'">',(string) $unit['name'],'</option>';
+	   echo '<option value="'.$i.'">'.(string) $unit['name'].'</option>';
 	   $i++;
 	}
 } else {
